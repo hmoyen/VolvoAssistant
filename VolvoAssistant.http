@@ -1,0 +1,6 @@
+@VolvoAssistant_HostAddress = http://localhost:5017
+
+GET {{VolvoAssistant_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
