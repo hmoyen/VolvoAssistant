@@ -27,7 +27,6 @@ router.post('/register', (req, res) => {
   
 });
 
-// Route to login a user
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -42,26 +41,21 @@ router.post('/login', (req, res) => {
       const user = result.rows[0];
 
       bcrypt.compare(password, user.password, (err, isMatch) => {
-        if (err) {
-          return res.status(500).json({ message: 'Error comparing passwords' });
-        }
+        if (err) return res.status(500).json({ message: 'Error comparing passwords' });
 
-        if (!isMatch) {
-          return res.status(401).json({ message: 'Invalid email or password' });
-        }
+        if (!isMatch) return res.status(401).json({ message: 'Invalid email or password' });
 
         const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.status(200).json({
           message: 'Login successful',
-          token
+          token,
+          user: { id: user.id, name: user.name, email: user.email, role: user.role }, // Send user info
         });
       });
     })
-    .catch(err => {
-      console.error(err.stack);
-      res.status(500).json({ message: 'Error logging in', error: err.message });
-    });
+    .catch(err => res.status(500).json({ message: 'Error logging in', error: err.message }));
 });
+
 
 module.exports = router;
