@@ -104,6 +104,54 @@ router.put('/update', authenticate, async (req, res) => {
     }
   });
   
+  // 📌 Get the first available technician for a given day and time slot
+  router.get('/first-available', async (req, res) => {
+    const { day_of_week, time_slot } = req.query;
+
+    if (!day_of_week || !time_slot) {
+        return res.status(400).json({ message: "Missing required query parameters: 'day_of_week' and 'time_slot'" });
+    }
+
+    try {
+
+        const techQuery = `
+            SELECT technician_id 
+            FROM technician_availability 
+            WHERE day_of_week = $1 AND time_slot = $2 AND status = true 
+            LIMIT 1;
+        `;
+        const techResult = await db.query(techQuery, [day_of_week, time_slot]);
+
+        if (techResult.rows.length === 0) {
+            return res.status(404).json({ message: 'No available technician found' });
+        }
+
+        const technician_id = techResult.rows[0].technician_id;
+
+        const userQuery = `
+            SELECT id, name, email 
+            FROM users 
+            WHERE id = $1 AND role = 'technician';
+        `;
+        const userResult = await db.query(userQuery, [technician_id]);
+
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ message: 'Technician details not found' });
+        }
+
+        const technician = userResult.rows[0];
+
+        res.status(200).json({
+            technician_id: technician.id,
+            name: technician.name,
+            email: technician.email
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error retrieving available technician', error: err.message });
+    }
+});
+
   
 
 module.exports = router;
