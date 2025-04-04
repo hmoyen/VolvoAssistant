@@ -2,6 +2,33 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db'); // ou '../config/db' dependendo da estrutura do seu projeto
 
+router.get('/trees', async (req, res) => {
+    const roots = await db.query('SELECT * FROM troubleshoot_tree WHERE parent_id IS NULL');
+    res.json(roots.rows);
+  });
+
+// GET /tree/:id
+router.get('/tree/:id', async (req, res) => {
+    const rootId = parseInt(req.params.id);
+    const allNodes = await db.query('SELECT * FROM troubleshoot_tree');
+    const buildTree = (id) => {
+      const node = allNodes.rows.find(n => n.id === id);
+      node.children = allNodes.rows.filter(n => n.parent_id === id).map(n => buildTree(n.id));
+      return node;
+    };
+    res.json(buildTree(rootId));
+  });
+
+// POST /trees
+router.post('/trees', async (req, res) => {
+    const { question } = req.body;
+    const result = await db.query(
+      'INSERT INTO troubleshoot_tree (parent_id, question) VALUES (NULL, $1) RETURNING *',
+      [question]
+    );
+    res.json(result.rows[0]);
+  });
+
 // GET full tree
 router.get('/', async (req, res) => {
   try {
