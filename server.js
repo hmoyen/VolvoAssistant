@@ -18,8 +18,11 @@ app.use(express.json());
 
 const userRoutes = require('./routes/userRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
+const troubleshootTreeRoutes = require('./routes/troubleshootTree');
 app.use('/api/users', userRoutes);
-app.use('/schedule', scheduleRoutes); 
+app.use('/schedule', scheduleRoutes);
+app.use('/api/tree', troubleshootTreeRoutes);
+
 
 app.get('/api/db-test', (req, res) => {
   db.query('SELECT NOW()', (err, result) => {
