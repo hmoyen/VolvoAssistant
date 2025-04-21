@@ -11,7 +11,7 @@ const users = new Map(); // Map to track connected users (socketId -> userDetail
 let activeChats = new Map(); // Map to track active chats (technicianId -> customerId)
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8001;
 
 // Setup Socket.IO
 const io = new Server(server, {
@@ -24,11 +24,13 @@ const io = new Server(server, {
 });
 
 // Middleware
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: "GET,POST,PUT,DELETE",
-  allowedHeaders: "Content-Type,Authorization"
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+  }),
+);
 app.use(express.json());
 
 // Routes
@@ -43,7 +45,9 @@ app.use("/api/tree", troubleshootTreeRoutes);
 app.get("/api/db-test", (req, res) => {
   db.query("SELECT NOW()", (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
-    res.status(200).json({ message: "Database connected", result: result.rows });
+    res
+      .status(200)
+      .json({ message: "Database connected", result: result.rows });
   });
 });
 
@@ -52,7 +56,8 @@ const technicians = new Map();
 let liveChatQueue = [];
 const videoCallQueue = [];
 
-const generateVideoCallLink = () => `https://meet.google.com/${Math.random().toString(36).substring(2, 15)}`;
+const generateVideoCallLink = () =>
+  `https://meet.google.com/${Math.random().toString(36).substring(2, 15)}`;
 
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
@@ -74,7 +79,6 @@ io.use((socket, next) => {
   }
 });
 
-
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
@@ -84,7 +88,10 @@ io.on("connection", (socket) => {
     console.log("User registered:", userDetails);
 
     if (userDetails.role === "technician") {
-      io.emit("updateTechnicianStatus", Array.from(users.values()).filter(user => user.role === "technician"));
+      io.emit(
+        "updateTechnicianStatus",
+        Array.from(users.values()).filter((user) => user.role === "technician"),
+      );
     }
   });
 
@@ -101,7 +108,9 @@ io.on("connection", (socket) => {
       liveChatQueue = liveChatQueue.filter((c) => c.id !== customerId);
       activeChats.set(socket.id, customerId); // Map technician to customer
       io.emit("updateLiveChatQueue", liveChatQueue); // Update queue for all technicians
-      io.to(customerId).emit("technicianConnected", { technicianId: socket.id });
+      io.to(customerId).emit("technicianConnected", {
+        technicianId: socket.id,
+      });
       io.to(socket.id).emit("customerConnected", customer);
     } else {
       console.warn(`[WARN] Customer with ID ${customerId} not found in queue.`);
@@ -115,16 +124,19 @@ io.on("connection", (socket) => {
       message,
       timestamp: Date.now(), // Add timestamp here
     };
-  
+
     io.to(to).emit("receiveMessage", messageData);
   });
-  
-    // ❌ End chat
-    socket.on("endChat", ({ customerId }) => {
-      io.to(customerId).emit("chatEnded");
-      liveChatQueue = liveChatQueue.filter((c) => c.id !== customerId);
-      io.emit("updateLiveChatQueue", liveChatQueue.filter((c) => c.connected));
-    });
+
+  // ❌ End chat
+  socket.on("endChat", ({ customerId }) => {
+    io.to(customerId).emit("chatEnded");
+    liveChatQueue = liveChatQueue.filter((c) => c.id !== customerId);
+    io.emit(
+      "updateLiveChatQueue",
+      liveChatQueue.filter((c) => c.connected),
+    );
+  });
 
   // Handle disconnection
   socket.on("disconnect", () => {
@@ -142,10 +154,15 @@ io.on("connection", (socket) => {
         }
         activeChats.delete(socket.id);
       }
-      io.emit("updateTechnicianStatus", Array.from(users.values()).filter(user => user.role === "technician"));
+      io.emit(
+        "updateTechnicianStatus",
+        Array.from(users.values()).filter((user) => user.role === "technician"),
+      );
     }
 
-    liveChatQueue = liveChatQueue.filter((customer) => customer.id !== socket.id);
+    liveChatQueue = liveChatQueue.filter(
+      (customer) => customer.id !== socket.id,
+    );
     io.emit("updateLiveChatQueue", liveChatQueue); // Notify all technicians
   });
 });
