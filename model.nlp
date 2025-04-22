@@ -1,0 +1,522 @@
+{
+  "settings": {
+    "languages": [
+      "en"
+    ],
+    "forceNER": true,
+    "tag": "nlp",
+    "threshold": 0.5,
+    "autoLoad": true,
+    "autoSave": true,
+    "modelFileName": "model.nlp",
+    "executeActionsBeforeAnswers": false,
+    "calculateSentiment": true
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "en"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "en": {
+        "settings": {
+          "locale": "en",
+          "trainByDomain": false,
+          "tag": "domain-manager-en",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "is,machin,smoke,the": {
+            "intent": "node_1",
+            "domain": "default"
+          },
+          "smoke": {
+            "intent": "node_1",
+            "domain": "default"
+          },
+          "burn": {
+            "intent": "node_1",
+            "domain": "default"
+          },
+          "fuel,issu,system": {
+            "intent": "node_56",
+            "domain": "default"
+          },
+          "fuel": {
+            "intent": "node_56",
+            "domain": "default"
+          },
+          "gas": {
+            "intent": "node_56",
+            "domain": "default"
+          },
+          "diesel": {
+            "intent": "node_56",
+            "domain": "default"
+          },
+          "engin,start": {
+            "intent": "node_56",
+            "domain": "default"
+          },
+          "engin,not,start,wo": {
+            "intent": "node_56",
+            "domain": "default"
+          },
+          "is,machin,overh,the": {
+            "intent": "node_43",
+            "domain": "default"
+          },
+          "overheat": {
+            "intent": "node_43",
+            "domain": "default"
+          },
+          "hot": {
+            "intent": "node_43",
+            "domain": "default"
+          },
+          "temperatur": {
+            "intent": "node_43",
+            "domain": "default"
+          },
+          "heat": {
+            "intent": "node_43",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "node_1": "default",
+          "node_56": "default",
+          "node_43": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "The machine is smoking",
+            "intent": "node_1"
+          },
+          {
+            "domain": "default",
+            "utterance": "smoke",
+            "intent": "node_1"
+          },
+          {
+            "domain": "default",
+            "utterance": "smoking",
+            "intent": "node_1"
+          },
+          {
+            "domain": "default",
+            "utterance": "burning",
+            "intent": "node_1"
+          },
+          {
+            "domain": "default",
+            "utterance": "Fuel system issue",
+            "intent": "node_56"
+          },
+          {
+            "domain": "default",
+            "utterance": "fuel",
+            "intent": "node_56"
+          },
+          {
+            "domain": "default",
+            "utterance": "gas",
+            "intent": "node_56"
+          },
+          {
+            "domain": "default",
+            "utterance": "diesel",
+            "intent": "node_56"
+          },
+          {
+            "domain": "default",
+            "utterance": "engine start",
+            "intent": "node_56"
+          },
+          {
+            "domain": "default",
+            "utterance": "engine won't start",
+            "intent": "node_56"
+          },
+          {
+            "domain": "default",
+            "utterance": "The machine is overheating",
+            "intent": "node_43"
+          },
+          {
+            "domain": "default",
+            "utterance": "overheat",
+            "intent": "node_43"
+          },
+          {
+            "domain": "default",
+            "utterance": "hot",
+            "intent": "node_43"
+          },
+          {
+            "domain": "default",
+            "utterance": "temperature",
+            "intent": "node_43"
+          },
+          {
+            "domain": "default",
+            "utterance": "heat",
+            "intent": "node_43"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "en",
+              "tag": "nlu-en",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "the": 1,
+              "machin": 1,
+              "is": 1,
+              "smoke": 1,
+              "burn": 1,
+              "fuel": 1,
+              "system": 1,
+              "issu": 1,
+              "gas": 1,
+              "diesel": 1,
+              "engin": 1,
+              "start": 1,
+              "wo": 1,
+              "not": 1,
+              "overh": 1,
+              "overheat": 1,
+              "hot": 1,
+              "temperatur": 1,
+              "heat": 1
+            },
+            "intents": {
+              "node_1": 1,
+              "node_56": 1,
+              "node_43": 1
+            },
+            "intentFeatures": {
+              "node_1": {
+                "the": 1,
+                "machin": 1,
+                "is": 1,
+                "smoke": 1,
+                "burn": 1
+              },
+              "node_56": {
+                "fuel": 1,
+                "system": 1,
+                "issu": 1,
+                "gas": 1,
+                "diesel": 1,
+                "engin": 1,
+                "start": 1,
+                "wo": 1,
+                "not": 1
+              },
+              "node_43": {
+                "the": 1,
+                "machin": 1,
+                "is": 1,
+                "overh": 1,
+                "overheat": 1,
+                "hot": 1,
+                "temperatur": 1,
+                "heat": 1
+              }
+            },
+            "featuresToIntent": {
+              "the": [
+                "node_1",
+                "node_43"
+              ],
+              "machin": [
+                "node_1",
+                "node_43"
+              ],
+              "is": [
+                "node_1",
+                "node_43"
+              ],
+              "smoke": [
+                "node_1"
+              ],
+              "burn": [
+                "node_1"
+              ],
+              "fuel": [
+                "node_56"
+              ],
+              "system": [
+                "node_56"
+              ],
+              "issu": [
+                "node_56"
+              ],
+              "gas": [
+                "node_56"
+              ],
+              "diesel": [
+                "node_56"
+              ],
+              "engin": [
+                "node_56"
+              ],
+              "start": [
+                "node_56"
+              ],
+              "wo": [
+                "node_56"
+              ],
+              "not": [
+                "node_56"
+              ],
+              "overh": [
+                "node_43"
+              ],
+              "overheat": [
+                "node_43"
+              ],
+              "hot": [
+                "node_43"
+              ],
+              "temperatur": [
+                "node_43"
+              ],
+              "heat": [
+                "node_43"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "en",
+                "tag": "nlu-en",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "the",
+                "machin",
+                "is",
+                "smoke",
+                "burn",
+                "fuel",
+                "system",
+                "issu",
+                "gas",
+                "diesel",
+                "engin",
+                "start",
+                "wo",
+                "not",
+                "overh",
+                "overheat",
+                "hot",
+                "temperatur",
+                "heat"
+              ],
+              "intents": [
+                "node_1",
+                "node_56",
+                "node_43"
+              ],
+              "perceptrons": [
+                [
+                  0.00205149594694376,
+                  0.00205149594694376,
+                  0.00205149594694376,
+                  12.035161018371582,
+                  11.875307083129883,
+                  -2.257812023162842,
+                  -0.6637553572654724,
+                  -0.6637553572654724,
+                  -2.2432875633239746,
+                  -2.2383882999420166,
+                  -1.1742851734161377,
+                  -1.1742851734161377,
+                  -0.35538560152053833,
+                  -0.35538560152053833,
+                  -2.609832286834717,
+                  -2.2290682792663574,
+                  -2.222904682159424,
+                  -2.2163774967193604,
+                  -2.2094898223876953,
+                  2.247936829536248
+                ],
+                [
+                  -1.2306387424468994,
+                  -1.2306387424468994,
+                  -1.2306387424468994,
+                  -4.224215030670166,
+                  -4.125293254852295,
+                  9.637495040893555,
+                  0.29894086718559265,
+                  0.29894086718559265,
+                  9.952072143554688,
+                  9.926329612731934,
+                  4.962372303009033,
+                  4.962372303009033,
+                  0.07993996143341064,
+                  0.07993996143341064,
+                  -0.86775803565979,
+                  -4.195340633392334,
+                  -4.183393955230713,
+                  -4.170782566070557,
+                  -4.157512187957764,
+                  4.24115562904417
+                ],
+                [
+                  0.8112240433692932,
+                  0.8112240433692932,
+                  0.8112240433692932,
+                  -7.7294087409973145,
+                  -5.252142906188965,
+                  -5.2556939125061035,
+                  -1.1721683740615845,
+                  -1.1721683740615845,
+                  -5.217708110809326,
+                  -5.197658538818359,
+                  -2.653803586959839,
+                  -2.653803586959839,
+                  -0.5770067572593689,
+                  -0.5770067572593689,
+                  6.502620220184326,
+                  8.900130271911621,
+                  8.8799409866333,
+                  8.858372688293457,
+                  8.835434913635254,
+                  5.334013244605739
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "en",
+        "The machine is smoking"
+      ],
+      [
+        "en",
+        "smoke"
+      ],
+      [
+        "en",
+        "smoking"
+      ],
+      [
+        "en",
+        "burning"
+      ],
+      [
+        "en",
+        "Fuel system issue"
+      ],
+      [
+        "en",
+        "fuel"
+      ],
+      [
+        "en",
+        "gas"
+      ],
+      [
+        "en",
+        "diesel"
+      ],
+      [
+        "en",
+        "engine start"
+      ],
+      [
+        "en",
+        "engine won't start"
+      ],
+      [
+        "en",
+        "The machine is overheating"
+      ],
+      [
+        "en",
+        "overheat"
+      ],
+      [
+        "en",
+        "hot"
+      ],
+      [
+        "en",
+        "temperature"
+      ],
+      [
+        "en",
+        "heat"
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner",
+      "entityPreffix": "%",
+      "entitySuffix": "%"
+    },
+    "rules": {}
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {
+      "en": {
+        "node_1": [
+          {
+            "answer": "Node 1: The machine is smoking"
+          }
+        ],
+        "node_56": [
+          {
+            "answer": "Node 56: Fuel system issue"
+          }
+        ],
+        "node_43": [
+          {
+            "answer": "Node 43: The machine is overheating"
+          }
+        ]
+      }
+    }
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {}
+}

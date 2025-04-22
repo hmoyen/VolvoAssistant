@@ -4,6 +4,8 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
+const { trainFromDatabase, loadManager } = require('./routes/nlp'); // Adjust the path as needed
+
 dotenv.config();
 
 const db = require("./config/db");
@@ -34,12 +36,19 @@ app.use(
 app.use(express.json());
 
 // Routes
+const machinesRouter = require('./routes/machineRoutes');
+const issuesRouter = require('./routes/issues');
 const userRoutes = require("./routes/userRoutes");
+const conversationRoutes = require("./routes/conversation");
 const scheduleRoutes = require("./routes/scheduleRoutes");
 const troubleshootTreeRoutes = require("./routes/troubleshootTree");
 app.use("/api/users", userRoutes);
 app.use("/schedule", scheduleRoutes);
 app.use("/api/tree", troubleshootTreeRoutes);
+app.use('/api/machines', machinesRouter);
+app.use('/api/issues', issuesRouter);
+app.use("/api/conversations", conversationRoutes);
+
 
 // DB test route
 app.get("/api/db-test", (req, res) => {
@@ -167,10 +176,18 @@ io.on("connection", (socket) => {
   });
 });
 
-// Start server
-server.listen(PORT, () => {
-  const host = process.env.CODESPACE_NAME
-    ? `https://${process.env.CODESPACE_NAME}-5000.app.github.dev`
-    : `http://localhost:${PORT}`;
-  console.log(`Server is running on ${host}`);
-});
+(async () => {
+  // Train NLP manager from the database before starting the server
+  await trainFromDatabase();
+
+  // After training, you can load the model (if needed)
+  await loadManager();
+
+  // Now start the server
+  server.listen(PORT, () => {
+    const host = process.env.CODESPACE_NAME
+      ? `https://${process.env.CODESPACE_NAME}-5000.app.github.dev`
+      : `http://localhost:${PORT}`;
+    console.log(`Server is running on ${host}`);
+  });
+})();
