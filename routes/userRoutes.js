@@ -52,6 +52,11 @@ router.post('/login', (req, res) => {
           token,
           user: { id: user.id, name: user.name, email: user.email, role: user.role }, // Send user info
         });
+        const updateSocketQuery = `UPDATE users SET socket_id = $1 WHERE id = $2`;
+        // Inside the bcrypt.compare block:
+        db.query(updateSocketQuery, [req.body.socketId, user.id]) // assuming socketId is sent in the login body
+          .catch(err => console.error("Failed to update socket ID:", err.message));
+
       });
     })
     .catch(err => res.status(500).json({ message: 'Error logging in', error: err.message }));

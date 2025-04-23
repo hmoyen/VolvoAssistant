@@ -129,7 +129,7 @@ router.put('/update', authenticate, async (req, res) => {
         const technician_id = techResult.rows[0].technician_id;
 
         const userQuery = `
-            SELECT id, name, email 
+            SELECT id, name, email, socket_id
             FROM users 
             WHERE id = $1 AND role = 'technician';
         `;
@@ -144,8 +144,11 @@ router.put('/update', authenticate, async (req, res) => {
         res.status(200).json({
             technician_id: technician.id,
             name: technician.name,
-            email: technician.email
+            email: technician.email,
+            socket_id: technician.socket_id
         });
+
+        console.log(technician.socket_id);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Error retrieving available technician', error: err.message });
