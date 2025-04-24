@@ -6,7 +6,7 @@ const manager = new NlpManager({ languages: ['en'], forceNER: true });
 async function trainFromDatabase() {
   try {
     console.log('[TRAINING] Fetching questions from database...');
-    const { rows } = await db.query('SELECT * FROM troubleshoot_tree WHERE parent_id IS NULL');
+    const { rows } = await db.query(`SELECT * FROM troubleshoot_tree WHERE id NOT IN (SELECT child_id FROM tree_edges)`);
     console.log(`[TRAINING] Found ${rows.length} root nodes to train`);
 
     for (const row of rows) {

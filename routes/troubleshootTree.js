@@ -104,6 +104,12 @@ router.get('/match', async (req, res) => {
       const nodeId = parseInt(result.intent.replace('node_', ''));
       console.log(`[MATCH] Matched intent to node ID ${nodeId} with confidence ${result.score}`);
 
+      // Verify if the nodeId is child fo another node
+      const isChild = await db.query('SELECT 1 FROM tree_edges WHERE child_id = $1 LIMIT 1', [nodeId]);
+      if (isChild.rows.length > 0) {
+        return res.status(400).json({ message: 'Node is not a root node' });
+      }
+
       const { rows } = await db.query('SELECT * FROM troubleshoot_tree WHERE id = $1', [nodeId]);
       console.log(`[MATCH] Query result for node ${nodeId}:`, rows);
 
@@ -142,13 +148,14 @@ router.get('/match-response', async (req, res) => {
 
   try {
     const { rows } = await db.query(`
-      SELECT *,
+      SELECT tt.*, te.response_label,
         (
           SELECT COUNT(*) FROM unnest($1::text[]) AS word
-          WHERE LOWER(response_label) LIKE '%' || word || '%'
+          WHERE LOWER(te.response_label) LIKE '%' || word || '%'
         ) AS match_score
-      FROM troubleshoot_tree
-      WHERE parent_id = $2
+      FROM tree_edges te
+      JOIN troubleshoot_tree tt ON tt.id = te.child_id
+      WHERE te.parent_id = $2
       ORDER BY match_score DESC
       LIMIT 1
     `, [words, parent_id]);
