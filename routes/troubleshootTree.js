@@ -2,44 +2,24 @@ const express = require('express');
 const { manager } = require('./nlp');
 const router = express.Router();
 const db = require('../config/db'); 
+const translate = require('@iamtraction/google-translate');
+
+router.get('/test-translate', async (req, res) => {
+  try {
+    const result = await translate('Olá mundo', { from: 'pt', to: 'en' });
+    console.log('Tradução:', result.text);
+    res.json({ translated: result.text });
+  } catch (err) {
+    console.error('Erro de tradução:', err);
+    res.status(500).json({ error: 'Falha na tradução' });
+  }
+});
+
 
 router.get('/trees', async (req, res) => {
     const roots = await db.query('SELECT * FROM troubleshoot_tree WHERE parent_id IS NULL');
     res.json(roots.rows);
   });
-
-// GET /tree/:id
-// router.get('/tree/:id', async (req, res) => {
-//     const rootId = parseInt(req.params.id);
-//     const allNodes = await db.query('SELECT * FROM troubleshoot_tree');
-//     const buildTree = (id) => {
-//       const node = allNodes.rows.find(n => n.id === id);
-//       node.children = allNodes.rows.filter(n => n.parent_id === id).map(n => buildTree(n.id));
-//       return node;
-//     };
-//     res.json(buildTree(rootId));
-//   });
-
-// POST /trees
-// router.post('/trees', async (req, res) => {
-//     const { question } = req.body;
-//     const result = await db.query(
-//       'INSERT INTO troubleshoot_tree (parent_id, question) VALUES (NULL, $1) RETURNING *',
-//       [question]
-//     );
-//     res.json(result.rows[0]);
-//   });
-
-// GET full tree
-// router.get('/', async (req, res) => {
-//   try {
-//     const { rows } = await db.query('SELECT * FROM troubleshoot_tree');
-//     res.json(rows);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Database error' });
-//   }
-// });
 
 // POST new node
 router.post('/', async (req, res) => {
@@ -97,7 +77,10 @@ router.get('/match', async (req, res) => {
 
   try {
     console.log('[MATCH] Calling NLP manager with keyword...');
-    const result = await manager.process('en', keyword);
+    const translated = await translate(keyword, { from: 'pt', to: 'en' });
+    console.log('Translated response:', translated.text);
+    console.log('Original response:', keyword);
+    const result = await manager.process('en', translated.text);
     console.log('[MATCH] NLP result:', result);
 
     if (result.intent.startsWith('node_') && result.score > 0.6) {
@@ -137,7 +120,13 @@ router.get('/match-response', async (req, res) => {
     return res.status(400).json({ error: 'parent_id and response are required' });
   }
 
-  const words = response
+
+  const translated = await translate(response, { from: 'pt', to: 'en' });
+  console.log('Translated response:', translated.text);
+  console.log('Original response:', response);
+
+
+  const words = translated.text
     .toLowerCase()
     .split(/\s+/)
     .filter(word => word.length > 2);
@@ -147,6 +136,7 @@ router.get('/match-response', async (req, res) => {
   }
 
   try {
+    
     const { rows } = await db.query(`
       SELECT tt.*, te.response_label,
         (
