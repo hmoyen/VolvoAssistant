@@ -13,7 +13,7 @@ const users = new Map(); // Map to track connected users (socketId -> userDetail
 let activeChats = new Map(); // Map to track active chats (technicianId -> customerId)
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 8001;
+const PORT = process.env.PORT || 5000;
 
 // Setup Socket.IO
 const io = new Server(server, {
@@ -42,6 +42,8 @@ const userRoutes = require("./routes/userRoutes");
 const conversationRoutes = require("./routes/conversation");
 const scheduleRoutes = require("./routes/scheduleRoutes");
 const troubleshootTreeRoutes = require("./routes/troubleshootTree");
+const ticketRoutes = require("./routes/ticket");
+app.use("/api/tickets", ticketRoutes);
 app.use("/api/users", userRoutes);
 app.use("/schedule", scheduleRoutes);
 app.use("/api/tree", troubleshootTreeRoutes);
