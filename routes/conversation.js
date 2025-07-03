@@ -1,21 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const pool = require("../config/db"); // or wherever your DB client is set up
+const pool = require("../config/db");
 
 // POST /conversations
 router.post("/", async (req, res) => {
-  const { issue_id, sender, message } = req.body;
+  const { ticket_id, sender, message, media_url } = req.body;
 
-  if (!issue_id || !sender || !message) {
-    return res.status(400).json({ error: "Missing required fields." });
+  if (!ticket_id || !sender || (!message && !media_url)) {
+    return res.status(400).json({ error: "Missing required fields: must include message or media_url." });
   }
 
   try {
     const result = await pool.query(
-      `INSERT INTO conversations (issue_id, sender, message)
-       VALUES ($1, $2, $3)
+      `INSERT INTO conversations (ticket_id, sender, message, media_url)
+       VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [issue_id, sender, message]
+      [ticket_id, sender, message || null, media_url || null]
     );
 
     res.status(201).json(result.rows[0]);

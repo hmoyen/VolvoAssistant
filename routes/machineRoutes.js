@@ -20,6 +20,7 @@ router.get("/:customerId", async (req, res) => {
 
 router.post("/find_by_model", async (req, res) => {
   const { user_id, model } = req.body;
+  console.log(model);
 
   try {
     const cleanedModel = model.replace(/\s+/g, "").toUpperCase();
@@ -36,6 +37,8 @@ router.post("/find_by_model", async (req, res) => {
         machine_id: row.machine_id,
       })),
     });
+
+
   } catch (error) {
     console.error("💥 Error searching by model:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
